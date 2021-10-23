@@ -30,6 +30,35 @@ async function run() {
       res.send(products);
     });
 
+    // get single product
+    app.get("/products/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await productsCollection.findOne(query);
+      res.send(result);
+    });
+
+    // UPDATE API / put api
+    app.put("/products/:id", async (req, res) => {
+      const id = req.params.id;
+      const updatedProdcut = req.body;
+      const filter = { _id: ObjectId(id) };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: {
+          productName: updatedProdcut.productName,
+          productPrice: updatedProdcut.productPrice,
+          productQuantity: updatedProdcut.productQuantity,
+        },
+      };
+      const result = await productsCollection.updateOne(
+        filter,
+        updateDoc,
+        options
+      );
+      res.json(result);
+    });
+
     // POST API
     app.post("/products", async (req, res) => {
       const newProduct = req.body;
