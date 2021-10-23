@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const ObjectId = require("mongodb").ObjectId;
 
 const port = process.env.PORT || 5000;
 
@@ -22,6 +23,13 @@ async function run() {
     const database = client.db("productManagement");
     const productsCollection = database.collection("products");
 
+    // GET API
+    app.get("/products", async (req, res) => {
+      const cursor = productsCollection.find({});
+      const products = await cursor.toArray();
+      res.send(products);
+    });
+
     // POST API
     app.post("/products", async (req, res) => {
       const newProduct = req.body;
@@ -36,11 +44,6 @@ async function run() {
 }
 
 run().catch(console.dir);
-
-// // GET API
-// app.get("/", async (req, res) => {
-//   res.send("product management server runging");
-// });
 
 // listening
 app.listen(port, () => {
